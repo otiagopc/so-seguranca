@@ -1,133 +1,77 @@
-🔐 Projeto de Comparação de Algoritmos Criptográficos
+# 🔐 TRABALHO IV - SEGURANÇA
 
-Este projeto executa testes de desempenho dos seguintes algoritmos:
+## 📋 REQUISITOS IMPLEMENTADOS
 
-AES (modo CBC)
+### ✅ **Requisitos Mínimos:**
+- Programa que criptografa/descriptografa arquivos
+- Medição de tempo para AES (simétrica) e RSA (assimétrica)
+- 5 medições com cada algoritmo
+- Tabela comparativa
 
-ChaCha20
+### ✅ **Requisitos Recomendados ADICIONAIS:**
+- **Múltiplos algoritmos:** AES + ChaCha20 + RSA
+- **Múltiplos tamanhos de chave:** AES 128/256 bits, RSA 2048/4096 bits
+- **Análise estatística robusta:** Média, desvio padrão, intervalo de confiança
+- **Throughput calculado:** Taxa em MB/s para cada algoritmo
 
-RSA (OAEP)
+## 🚀 COMO EXECUTAR
 
-Ele mede o tempo gasto por cada algoritmo ao cifrar um mesmo arquivo, repetindo o processo várias vezes para produzir uma tabela estatisticamente representativa.
+### 1. **Preparação inicial:**
+```bash
+# Instalar dependências
+pip install -r requirements.txt
 
-📁 Estrutura do Projeto
-|
-|-- crypto_compare.py
-|-- benchmark_simple.py
-|-- rsa_2048_public.pem   (gerado automaticamente, se não existir)
-|-- rsa_2048_private.pem  (gerado automaticamente, se não existir)
-|-- teste.bin (arquivo que você fornece)
-|-- results_table/
-|     |-- exec_1.txt
-|     |-- exec_2.txt
-|     |-- exec_3.txt
-|     |-- tabela.csv
-|
-|-- README.md
+# Criar arquivos de teste
+python criar_arquivos_teste.py
+2. Teste automático (RECOMENDADO):
+bash
+python teste_automatico.py
+3. Testes manuais:
+Teste básico (5 repetições):
+bash
+python benchmark_simple.py --file teste_1mb.bin --reps 5
+Teste com múltiplos tamanhos de AES:
+bash
+python benchmark_simple.py --file teste_1mb.bin --reps 5 --aes_bits 128 256
+Teste com RSA 4096 bits:
+bash
+python benchmark_simple.py --file teste_1mb.bin --reps 3 --rsa_bits 4096
+Teste rápido (100 KB):
+bash
+python benchmark_simple.py --file teste_100kb.bin --reps 3
+📊 SAÍDAS GERADAS
+O programa gera na pasta RESULTADOS_FINAIS/:
 
-⚙️ Arquivos Principais
-📌 crypto_compare.py
+1. Tabelas CSV:
+tabela_aes128_rsa2048.csv - Resultados para AES-128
 
-Executa a criptografia com AES, ChaCha20 e RSA e retorna um JSON contendo:
+tabela_aes256_rsa2048.csv - Resultados para AES-256
 
-{
-    "t_aes": 0.0031,
-    "t_chacha20": 0.0024,
-    "t_rsa": 0.1651,
-    "file_size": 1048576
-}
+2. Arquivos brutos:
+exec_aes128_rsa2048_1.txt até _5.txt - Saídas JSON de cada execução
 
+3. Análise estatística:
+estatisticas_detalhadas.txt - Análise completa com médias, desvios, etc.
 
-⚠️ Não altere o formato da saída, pois benchmark_simple.py depende dele.
+resumo_estatistico.csv - Resumo em formato de tabela
 
-📌 benchmark_simple.py
+📈 INTERPRETAÇÃO DOS RESULTADOS
+Colunas da tabela:
+Tempo AES (s) - Tempo para cifrar com AES
 
-Script responsável por:
+Tempo RSA (s) - Tempo para cifrar com RSA
 
-✔ Executar o crypto_compare.py várias vezes
-✔ Gerar uma tabela em .csv
-✔ Criar arquivos .txt com a saída bruta de cada execução
-✔ Calcular o ratio RSA/AES
+Throughput AES (MB/s) - Velocidade do AES
 
-🧪 Como Executar os Testes
-1️⃣ Crie um arquivo de entrada para testar
+Throughput RSA (MB/s) - Velocidade do RSA
 
-Exemplo de arquivo de 1 MB:
+TempoRSA/TempoAES - Quantas vezes o RSA é mais lento
 
-Em Python:
-with open("teste.bin","wb") as f:
-    f.write(b"A" * 1024 * 1024)
+Resultados esperados:
+AES: 200-500 MB/s
 
-2️⃣ Execute o benchmark
-python benchmark_simple.py --file teste.bin --reps 5
+ChaCha20: 250-500 MB/s
 
-Parâmetros:
-Parâmetro	Descrição	Padrão
---file	Arquivo a ser criptografado	(obrigatório)
---reps	Número de execuções (linhas da tabela)	5
---rsa_bits	Tamanho da chave RSA	2048
---outdir	Pasta onde salvar resultados	results_table
+RSA: 0.3-0.8 MB/s
 
-Exemplo com 10 repetições:
-
-python benchmark_simple.py --file teste.bin --reps 10
-
-📤 Saídas Geradas
-
-Após rodar o script, será criada a pasta:
-
-results_table/
-
-
-Dentro dela:
-
-📄 tabela.csv
-
-Tabela no formato solicitado:
-
-Repetição,Tam. Arquivo,Tempo AES (s),Tempo ChaCha20 (s),Tempo RSA (s),TempoRSA/TempoAES
-1,1 MB,0.003100,0.002400,0.162000,52.258065
-2,1 MB,0.003000,0.002300,0.159000,53.000000
-...
-
-📝 exec_X.txt
-
-Cada execução tem um arquivo contendo a saída bruta do crypto_compare.py.
-
-Exemplo de conteúdo de exec_1.txt:
-
-{"t_aes": 0.0031, "t_chacha20": 0.0024, "t_rsa": 0.162, "file_size": 1048576}
-
-
-Esses arquivos devem ser enviados junto com a tabela, conforme requerido.
-
-📊 Como Interpretar a Tabela
-
-Cada linha representa uma repetição completa do processo de criptografia.
-
-Tempo AES (s) → velocidade do AES-CBC
-
-Tempo ChaCha20 (s) → velocidade do ChaCha20
-
-Tempo RSA (s) → tempo para cifrar usando RSA
-
-TempoRSA/TempoAES → se RSA for 100x mais lento que AES, aparece algo como 100.0
-
-Este valor é importante para mostrar o impacto da criptografia assimétrica em comparação com a simétrica.
-
-🔒 Geração de Chaves RSA
-
-Você NÃO precisa gerar manualmente.
-
-Ao rodar o script:
-
-python benchmark_simple.py --file teste.bin
-
-
-Se as chaves rsa_2048_public.pem e rsa_2048_private.pem não existirem, elas são criadas automaticamente.
-
-🧩 Dependências
-
-Instale o PyCryptodome:
-
-pip install pycryptodome
+Razão RSA/AES: 300-900x mais lento
